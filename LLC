@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int info;
+    struct node *next;
+};
+
+typedef struct node* NODE;
+
+// Function to allocate a new node
+NODE getnode() {
+    NODE x = (NODE) malloc(sizeof(struct node));
+    if (x == NULL) {
+        printf("Out of memory\n");
+        exit(0);
+    }
+    return x;
+}
+
+// Function to insert a node at the front of the circular singly linked list
+NODE insert_front(int item, NODE last) {
+    NODE temp = getnode();
+    temp->info = item;
+
+    if (last == NULL) {
+        temp->next = temp;
+        return temp;
+    }
+    temp->next = last->next;
+    last->next = temp;
+    return temp;
+}
+
+// Function to insert a node at the end of the circular singly linked list
+NODE insert_end(int item, NODE last) {
+    return insert_front(item, last); // Inserting at the end is equivalent to inserting at the front in a circular list
+}
+
+// Function to delete the front node of the circular singly linked list
+NODE delete_front(NODE last) {
+    if (last == NULL) {
+        printf("List is empty, cannot delete\n");
+        return NULL;
+    }
+    if (last->next == last) {
+        free(last);
+        return NULL;
+    }
+    NODE temp = last->next;
+    last->next = temp->next;
+    free(temp);
+    return last;
+}
+
+// Function to delete the last node of the circular singly linked list
+NODE delete_end(NODE last) {
+    return delete_front(last); // Deleting the last node is equivalent to deleting the front node in a circular list
+}
+
+// Function to display the contents of the circular singly linked list
+void display(NODE last) {
+    if (last == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+    NODE temp = last->next;
+    printf("The contents of the circular singly linked list are: ");
+    do {
+        printf("%d ", temp->info);
+        temp = temp->next;
+    } while (temp != last->next);
+    printf("\n");
+}
+
+// Main function
+int main() {
+    NODE last = NULL;
+    int choice, item;
+
+    while (1) {
+        printf("\n1: Insert Front\n2: Insert End\n3: Delete Front\n4: Delete End\n5: Display\n6: Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the item to be inserted at the front: ");
+                scanf("%d", &item);
+                last = insert_front(item, last);
+                break;
+            case 2:
+                printf("Enter the item to be inserted at the end: ");
+                scanf("%d", &item);
+                last = insert_end(item, last);
+                break;
+            case 3:
+                last = delete_front(last);
+                break;
+            case 4:
+                last = delete_end(last);
+                break;
+            case 5:
+                display(last);
+                break;
+            case 6:
+                exit(0);
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+    return 0;
+}
